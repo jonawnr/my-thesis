@@ -50,8 +50,8 @@
 # LaTeX temporary directories
 auto/
 
-# PDF files (uncomment if you don't want to track PDFs)
-# *.pdf
+# PDF files (comment out if you want to track PDFs)
+*.pdf
 
 # Editor files
 .DS_Store

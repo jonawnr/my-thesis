@@ -1,0 +1,87 @@
+\documentclass[sigplan, nonacm]{acmart}
+
+\begin{document}
+
+\title{Model-based Mutation Testing: A Comparative Study with PITest}
+
+\author{Jonathan Wagner}
+\email{wagnerjo@students.uni-marburg.de}
+\affiliation{%
+  \institution{Philipps-University Marburg}
+  \city{Marburg}
+  \country{Germany}
+}
+
+\maketitle
+
+\section{Introduction}
+Mutation testing is a technique to evaluate the quality of test suites by injecting small changes (mutants) into a program and analyzing whether existing tests can detect these artificial faults \cite{offutt_mutation_2001}. A robust test suite should be able to distinguish between the original and mutated versions of the program by failing on the latter. Various tools have been developed to facilitate mutation testing by automating the generation and analysis of mutants \cite{coles_pit_2016}.
+
+Among these tools, Model-based Mutation Testing (MMT) provides a unique approach using model transformation techniques to flexibly mutate Java bytecode \cite{bockisch_mmt_2024, bockisch_mutation_2024}. Unlike traditional mutation testing tools such as PITest \cite{coles_pit_2016}, which primarily focus on manipulating source code or bytecode through predefined mutation operators, MMT allows the definition of more advanced and customizable mutations, including object-oriented and Java-specific properties. This flexibility enables a more thorough assessment of the effectiveness of the test suite, particularly when detecting complex bugs.
+
+This paper presents a comparative study between MMT and PITest. We discuss the fundamental principles of mutation testing, explore the capabilities and limitations of each tool, and evaluate their performance on real-world datasets like Defects4J \cite{just_defects4j_2014}. The study aims to highlight the strengths and weaknesses of both approaches and provide insight into when MMT or PITest might be preferable.
+
+\section{Mutation Testing}
+\begin{itemize}
+    \item Basic concepts (mutants, mutation operators, mutation score)
+    \item Advantages and limitations
+\end{itemize}
+Mutation testing is a fault-based testing technique designed to assess the quality of a test suite by deliberately introducing small syntactic changes, known as \emph{mutants}, into the program under test \cite{offutt_mutation_2001}. The core hypothesis is that a well-designed test suite should be able to detect these artificially injected faults—commonly by causing the tests to fail when run against the mutated version. Each mutant is produced by applying a mutation operator that systematically modifies program elements, such as arithmetic operators, conditional expressions, or method calls \cite{JiaHarman2000}.
+
+The effectiveness of mutation testing is commonly measured by the \emph{mutation score}, defined as the ratio of the number of mutants detected (or "killed") by the test suite to the total number of non-equivalent mutants generated \cite{offutt_mutation_2001}. A high mutation score generally indicates that the test suite is robust in detecting potential faults, while a low score suggests areas where additional or more rigorous testing may be necessary.
+
+Despite its strengths, mutation testing faces certain challenges. One of the main issues is the \emph{equivalent mutant problem}, where some mutants, though syntactically different, are semantically equivalent to the original program and, therefore, cannot be detected by any test case \cite{offutt_mutation_2001}. Additionally, the sheer number of possible mutants can result in high computational costs. To mitigate this, several strategies such as selective mutation, mutant sampling, and the use of reduction techniques have been proposed \cite{JiaHarman2000, Schuler2009}. These approaches aim to reduce the mutant set to a manageable size while still retaining those mutants that are most likely to reveal weaknesses in the test suite.
+
+Overall, mutation testing remains a powerful technique for evaluating and improving the effectiveness of test suites, despite the challenges associated with equivalent mutants and execution overhead.
+
+\section{Model-based Mutation Testing Tool (MMT)}
+\begin{itemize}
+    \item Definition and overview of MMT
+    \item Key features and functionalities of MMT
+    \item Current status and usage context (research or industrial)
+    \item Recent improvements or ongoing developments
+\end{itemize}
+
+\section{Analyzing the MMT Model}
+\begin{itemize}
+    \item Description of the underlying model (graph, UML, FSM, etc.)
+    \item Visual representation of a typical MMT model (example figure later)
+    \item Metrics applied to MMT model (complexity metrics, coverage metrics, etc.)
+    \item Analysis of model metrics indicating performance limitations
+    \item Suggestions for performance improvement based on metric analysis
+\end{itemize}
+
+\section{PITest}
+\begin{itemize}
+    \item Definition and overview of PITest
+    \item Key capabilities and functionality
+    \item Current status and community adoption (industrial/research)
+    \item Notable recent improvements and community-driven extensions
+\end{itemize}
+
+\section{Applying Mutation Testing to Defects4J}
+\begin{itemize}
+    \item Introduction to Defects4J (brief)
+    \item Methodology for applying MMT and PITest to Defects4J examples
+    \item Summary of expected outcomes or preliminary findings
+\end{itemize}
+
+\section{Comparison of MMT with PITest}
+\begin{itemize}
+    \item Feature-by-feature comparison (mutation operators, ease-of-use, scalability)
+    \item Performance comparison (speed, mutation score, mutant generation efficiency)
+    \item Strengths and weaknesses of each tool
+    \item Contextual suitability (when to prefer MMT or PITest)
+\end{itemize}
+
+\section{Conclusion}
+\begin{itemize}
+    \item Summary of main points discussed
+    \item Highlight potential improvements for MMT identified by metrics
+    \item Recommendations for future research and practical application
+\end{itemize}
+
+\bibliographystyle{ACM-Reference-Format}
+\bibliography{references}
+
+\end{document}

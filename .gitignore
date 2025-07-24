@@ -1,0 +1,73 @@
+# LaTeX auxiliary files
+*.aux
+*.bbl
+*.bcf
+*.blg
+*.brf
+*.fdb_latexmk
+*.fls
+*.lof
+*.log
+*.lot
+*.out
+*.run.xml
+*.synctex.gz
+*.toc
+*.idx
+*.ilg
+*.ind
+*.nav
+*.snm
+*.vrb
+
+# LaTeX temporary files
+*.backup
+*~
+*.tmp
+
+# BibTeX files
+*.bib.bak
+
+# LaTeX Beamer
+*.figlist
+*.fls
+*.makefile
+
+# Glossaries
+*.acn
+*.acr
+*.alg
+*.glg
+*.glo
+*.gls
+*.glsdefs
+
+# Nomenclature
+*.nlo
+*.nls
+*.nlg
+
+# LaTeX temporary directories
+auto/
+
+# PDF files (uncomment if you don't want to track PDFs)
+# *.pdf
+
+# Editor files
+.DS_Store
+*.swp
+*.swo
+*~
+
+# IDE/Editor specific files
+.vscode/
+.idea/
+*.sublime-*
+
+# System files
+Thumbs.db
+Desktop.ini
+
+# Temporary build directories
+build/
+out/

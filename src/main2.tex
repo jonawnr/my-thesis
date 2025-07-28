@@ -1,0 +1,292 @@
+\documentclass[sigplan, nonacm]{acmart}
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx}
+\usepackage{subcaption}
+\usepackage{microtype}
+\usepackage{flushend}  % Better column balancing
+\usepackage{balance}   % Fix balance package issues
+
+\begin{document}
+
+\title{Model-based Mutation Testing: A Comparative Study with PITest}
+
+\author{Jonathan Wagner}
+\email{wagnerjo@students.uni-marburg.de}
+\affiliation{%
+	\institution{Philipps-University Marburg}
+	\city{Marburg}
+	\country{Germany}
+}
+
+\maketitle
+
+\section{Introduction}
+Mutation testing is a technique to evaluate the quality of test suites by
+injecting small changes (mutants) into a program and analyzing whether existing
+tests can detect these artificial faults \cite{offutt_mutation_2001}. A robust
+test suite should be able to distinguish between the original and mutated
+versions of the program by failing on the latter. Various tools have been
+developed to facilitate mutation testing by automating the generation and
+analysis of mutants \cite{coles_pit_2016}.
+
+Among these tools, Model-based Mutation Testing (MMT) provides a unique
+approach using model transformation techniques to flexibly mutate Java bytecode
+\cite{bockisch_mmt_2024, bockisch_mutation_2024}. Unlike traditional mutation
+testing tools such as PITest \cite{coles_pit_2016}, which primarily focus on
+manipulating source code or bytecode through predefined mutation operators,
+MMT allows the definition of more advanced mutations, including the
+modification of object-oriented structures, Java-specific properties and API
+method calls. This flexibility enables a more thorough assessment of the
+effectiveness of the test suite, particularly when detecting complex bugs.
+
+This paper presents a comparative study between MMT and PITest. We discuss
+the fundamental principles of mutation testing, explore the capabilities and
+limitations of each tool, and evaluate their performance on real-world
+datasets like Defects4J \cite{just_defects4j_2014}. The study aims to
+highlight the strengths and weaknesses of both approaches and provide insight
+into when MMT or PITest might be preferable.
+
+\section{Mutation Testing}
+
+\subsection{Basic Concepts}
+Mutation testing operates on several fundamental concepts.
+First, a \textit{mutant} is a modified version of the original software
+program, containing a small, intentional syntactic change designed to simulate
+a typical programming error. The mutations are usually performed on Java
+source code or bytecode. Tools that support writing code transformations are
+Polyglot for source code and ASM or BCEL for bytecode. Relevant information
+is often implicit in source code, which could quickly lead to illegal code
+during mutation. Therefore, newer tools mostly use bytecode mutation.
+
+Mutation operators define how these mutations are introduced and for
+bytecode mutation tools like Jumble or PITest, they typically involve minor
+syntactical modifications such as replacing arithmetic operators (e.g.,
+changing '+' to '-'), relational operators (`==` to `!=`), or method calls
+and variable accesses \cite{offutt_mutation_2001}. MMT expands the
+traditional set by providing advanced operators that manipulate Java-specific
+properties, inheritance structures, and interactions with APIs, thus
+reflecting more realistic and complex fault scenarios
+\cite{bockisch_mmt_2024}. This is possible because of the model-based
+approach of MMT\@. The effectiveness of a mutation testing approach depends
+directly on the potential to find missing tests and therefore the strength
+and variance of the mutation operators.
+
+Next, the mutation score is calculated as the ratio between the number of
+detected (or "killed") mutants and the total number of generated mutants. A
+mutation score of 1.0 means all mutants were killed. Ideally, a high
+mutation score indicates a robust test suite capable of detecting subtle
+faults.
+
+\begin{itemize}
+	\item PATCH OVERLAP!
+	\item Reduction strategies
+\end{itemize}
+
+\subsection{Advantages and Limitations}
+
+Mutation testing provides several notable advantages. Primarily, it
+encourages the development of high-quality tests capable of detecting subtle
+faults, thereby enhancing the rigor of the testing process
+\cite{jia_analysis_2011}. Unlike traditional coverage metrics, mutation
+testing can reveal weaknesses in test suites that might otherwise remain
+undetected, since high coverage does not necessarily guarantee fault
+detection \cite{jia_analysis_2011, bockisch_mmt_2024}. The technique also
+promotes improvements in overall code quality, as it necessitates careful
+programming practices and clear, rigorous software specifications
+\cite{offutt_mutation_2001}. Moreover, mutation testing offers an objective
+and quantifiable measure of test suite effectiveness, particularly beneficial
+for critical systems where software reliability is paramount and faults can
+have significant repercussions \cite{offutt_mutation_2001,jia_analysis_2011}.
+
+Despite these advantages, mutation testing also faces several limitations.
+One significant drawback is its high computational cost. Generating mutants
+and executing test suites against numerous mutants can be prohibitively
+expensive, particularly for large or complex systems. This is exacerbated by
+the need for repeated execution and potential overhead associated with model
+transformation techniques used by MMT \cite{bockisch_mutation_2024}.
+Additionally, mutation testing relies heavily on an existing robust testing
+infrastructure and can become challenging to integrate seamlessly into the
+software development lifecycle without considerable upfront investment.
+
+Another well-documented limitation involves equivalent mutants. Identifying
+and eliminating these semantically identical but syntactically different
+mutants can be challenging, often requiring manual analysis
+\cite{jia_analysis_2011}. Consequently, mutation scores can sometimes be
+artificially depressed, hindering accurate assessments of test suite
+effectiveness. Furthermore, maximizing mutation scores can inadvertently
+encourage developers to produce overly intricate tests. Such tests, while
+thorough, can slow down development cycles, hinder maintainability, and
+diminish test comprehensibility \cite{offutt_mutation_2001,jia_analysis_2011}.
+
+Overall, mutation testing remains an essential technique for evaluating test
+suite effectiveness, driving improvements in test coverage and fault
+detection, and inspiring further research into more efficient and expressive
+mutation strategies.
+
+\section{Model-based Mutation Testing Tool (MMT)}
+
+MMT is an innovative tool that applies a model-driven approach to mutation
+testing of Java bytecode. It transforms compiled bytecode into an abstract
+model based on the Mod-BEAM metamodel, applies mutation operators defined as
+model transformations, and subsequently regenerates executable code, thereby
+abstracting away many low-level details of the bytecode itself. This strategy
+enables MMT to support not only basic mutation operators, which alter
+arithmetic or relational expressions, but also advanced operators that modify
+object-oriented structures, handle Java-specific properties, and adjust API
+method calls—a unique feature among current mutation testing tools.
+
+A core strength of MMT lies in its integration within the Eclipse
+environment. As an Eclipse plug-in, it offers a graphical interface that
+allows users to manage mutation analysis workflows seamlessly. The tool
+leverages Henshin for specifying model transformations and ensures syntactic
+correctness of the mutated bytecode through automatically enforced OCL
+constraints. Additionally, MMT supports both standard and custom mutation
+operators, allowing for extensibility and the adaptation of the tool to
+various testing scenarios.
+
+Although it began as a research prototype, MMT has shown promise for both
+academic investigations and industrial applications, as evidenced by its
+successful evaluation on real-world benchmarks such as Defects4J. Its ability
+to generate mutants that closely resemble actual bugs provides valuable
+insights into the robustness of test suites, demonstrating its effectiveness
+in academic studies. While its current usage is predominantly within research
+contexts, the underlying design and Eclipse integration suggest potential
+applicability in industrial settings.
+
+Ongoing developments are focused on broadening the set of mutation operators
+and enhancing mutant generation efficiency. Recent improvements include the
+integration of reduction strategies based on test coverage and cyclomatic
+complexity, which help to filter out less effective mutants without
+compromising the detection of those close to real bugs. Future work aims to
+incorporate additional model transformation engines and further refine the
+tool's capabilities, thereby extending its applicability and usability across
+a wider range of Java applications.
+
+\begin{itemize}
+	\item DOUBLE CHECK LAST SECTION ONGOING DEVELOPMENTS
+\end{itemize}
+
+\section{Analyzing the MMT Model}
+
+The MMT model is built upon the Mod-BEAM metamodel, which is based on the
+Eclipse Modeling Framework (EMF). At the root of this model lies the
+\texttt{Project} element, which aggregates multiple \texttt{Clazz} entities
+corresponding to individual class files. Each \texttt{Clazz} contains nested
+\texttt{Method} and \texttt{Field} elements, while the code of a method is
+represented as a control flow graph comprising numerous \texttt{Instruction}
+objects. These instructions are instances of concrete subclasses derived from
+an abstract \texttt{Instruction} EClass and have specific attributes—for
+example, a \texttt{TypeReference} for instructions that instantiate objects.
+Furthermore, each instruction maintains references to its outgoing control
+flow edges, which can be unconditional, conditional, or exceptional, thereby
+modeling the program's execution semantics as a graph structure.
+
+A key strength of this model is its uniform and declarative representation of
+bytecode, which facilitates the specification of mutation operators using
+Henshin—a model transformation language based on graph transformation
+concepts that supports formal validation. This uniformity allows mutation
+operators to be defined in a highly readable and context-sensitive manner.
+Operators can simultaneously access disparate parts of the model, enabling
+the manipulation of complex object-oriented structures and Java-specific
+properties while ensuring that the transformed model continues to satisfy the
+stringent OCL constraints imposed by the bytecode verifier.
+
+Beyond structural representation, the MMT model incorporates a set of metrics
+and annotations that are critical for analyzing and optimizing the mutation
+testing process. A static analysis phase inspects the bytecode model to
+compute metrics such as cyclomatic complexity. For instance, each
+\texttt{Method} object is annotated with a key (e.g., "complexity") and a
+corresponding value that reflects its cyclomatic complexity, as derived from
+its control flow graph. These annotations are not merely descriptive; they
+serve as a filtering mechanism by guiding mutation operators to focus on code
+regions where complex logic increases the likelihood of subtle bugs.
+
+In addition to the static strategy, a dynamic strategy is employed whereby the
+bytecode model is instrumented with extra code to collect runtime data, such
+as method coverage during test execution. The results of this dynamic
+analysis are then recorded as annotations in the model (with keys like
+"covered"), further refining the selection process for mutant generation.
+Analysis of these annotations has revealed that while many mutants are
+generated, those applied to code segments with high complexity and active
+test coverage are significantly more effective in uncovering weaknesses in
+the test suite.
+
+The insights obtained from the metric analysis also highlight performance
+limitations inherent to the mutation testing process. For example, methods
+with elevated cyclomatic complexity tend to produce a larger number of
+potential mutants, which can lead to increased computational overhead during
+test execution. In response, the integration of reduction strategies that
+leverage these metrics has proven effective in filtering out less meaningful
+mutants—such as those derived from code that is either untested or exhibits
+linear control flow—without compromising the detection of mutants that
+closely resemble real faults.
+
+Looking forward, further improvements can be achieved by fine-tuning the
+thresholds used for these reduction strategies and by integrating additional
+metrics that capture other critical aspects of code structure and behavior.
+Such enhancements are expected to streamline the mutation testing process,
+reducing both the computational burden and the noise in mutant generation,
+while maintaining high diagnostic value in test suite evaluation.
+
+\section{PITest}
+
+PITest is a practical mutation testing framework for Java that has been
+engineered with real-world codebases in mind. By operating directly on Java
+bytecode, the tool avoids the overhead associated with recompilation and
+enables the rapid generation of mutants through bytecode manipulation.
+Additionally, PIT utilizes a sophisticated mutant-selection strategy that
+only executes tests capable of potentially killing the generated mutants,
+further optimizing the mutation testing process.
+
+Designed for seamless integration into existing development workflows, PIT is
+easily incorporated into build tools such as Maven, Ant, and Gradle, and it
+integrates well with popular integrated development environments like Eclipse
+Noed
+execution mean that it can be adopted with minimal disruption to the standard
+development process. Moreover, PIT produces detailed HTML reports that
+visually annotate source code with mutation information, thereby helping
+developers quickly identify and analyze surviving mutants.
+
+Over time, PIT has evolved significantly. While earlier versions supported a
+modest set of mutation operators, recent extensions have introduced an
+expanded set that simulates a broader range of fault scenarios. These
+enhancements not only improve the fault-detection capability of the tool but
+also maintain efficient performance, as the extended operators are designed
+to impose minimal additional overhead. The active, open-source community
+around PIT continues to drive further improvements, making it a robust and
+widely adopted solution in both industrial and academic settings.
+
+In summary, PIT combines high performance, ease of integration, and continuous
+innovation to offer an effective and scalable mutation testing solution for
+Java applications.
+
+\section{Applying Mutation Testing to Defects4J}
+\begin{itemize}
+	\item Introduction to Defects4J (brief)
+	\item Methodology for applying MMT and PITest to Defects4J examples
+	\item Summary of expected outcomes or preliminary findings
+\end{itemize}
+
+\section{Comparison of MMT with PITest}
+\begin{itemize}
+	\item Feature-by-feature comparison (mutation operators, ease-of-use,
+	      scalability)
+	\item Performance comparison (speed, mutation score, mutant generation
+	      efficiency)
+	\item Strengths and weaknesses of each tool
+	\item Contextual suitability (when to prefer MMT or PITest)
+\end{itemize}
+
+\section{Conclusion}
+\begin{itemize}
+	\item Summary of main points discussed
+	\item Highlight potential improvements for MMT identified by metrics
+	\item Recommendations for future research and practical application
+\end{itemize}
+
+\vfill
+\balance
+\bibliographystyle{ACM-Reference-Format}
+\bibliography{references}
+
+\end{document}

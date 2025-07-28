@@ -1,0 +1,99 @@
+\documentclass[sigplan, nonacm]{acmart}
+
+\begin{document}
+
+\title{Model-based Mutation Testing: A Comparative Study with PITest}
+
+\author{Jonathan Wagner}
+\email{wagnerjo@students.uni-marburg.de}
+\affiliation{%
+	\institution{Philipps-University Marburg}
+	\city{Marburg}
+	\country{Germany}
+}
+
+\maketitle
+
+\section{Introduction}
+\begin{itemize}
+	\item Definition and overview of Mutation Testing
+	\item Importance of Mutation Testing in software testing
+	\item Brief motivation for comparing MMT and PITest
+\end{itemize}
+
+\section{Mutation Testing}
+\begin{itemize}
+	\item Basic concepts (mutants, mutation operators, mutation score)
+	      \begin{itemize}
+		      \item What are mutants?
+		      \item What are mutation operators and examples?
+		      \item What is the mutation score and why is it not always the best metric?
+	      \end{itemize}
+	\item Advantages and limitations
+	      \begin{itemize}
+		      \item Advantages:
+		      \item High Quality Tests
+		      \item Detects Weaknesses missed by Traditional Coverage Metrics
+		      \item Improves Code Quality
+		      \item Objective Assessment
+		      \item Effective in Critical Systems
+		      \item Disadvantages:
+		      \item High Computational Cost, especially for MMT and for large codebases
+		      \item Equivalent Mutants Problem
+		      \item Requires Robust Infrastructure. Setting up can be complex and maintanance-intensive. May require significant investment in tooling and integration.
+		      \item Interpretation Challenges. 100\% Mutation Score not always feasible or desirable
+		      \item Overly Complex Tests can slow down development and decrease maintainability.
+	      \end{itemize}
+\end{itemize}
+
+\section{Model-based Mutation Testing Tool (MMT)}
+\begin{itemize}
+	\item Definition and overview of MMT
+	\item Key features and functionalities of MMT
+	\item Current status and usage context (research or industrial)
+	\item Recent improvements or ongoing developments
+\end{itemize}
+
+\section{Analyzing the MMT Model}
+\begin{itemize}
+	\item Description of the underlying model (graph, UML, FSM, etc.)
+	\item Visual representation of a typical MMT model (example figure later)
+	\item Metrics applied to MMT model (complexity metrics, coverage metrics, etc.)
+	\item Analysis of model metrics indicating performance limitations
+	\item Suggestions for performance improvement based on metric analysis
+\end{itemize}
+
+\section{PITest}
+\begin{itemize}
+	\item Definition and overview of PITest
+	\item Key capabilities and functionality
+	\item Current status and community adoption (industrial/research)
+	\item Notable recent improvements and community-driven extensions
+\end{itemize}
+
+\section{Applying Mutation Testing to Defects4J}
+\begin{itemize}
+	\item Introduction to Defects4J (brief)
+	\item Methodology for applying MMT and PITest to Defects4J examples
+	\item Summary of expected outcomes or preliminary findings
+\end{itemize}
+
+\section{Comparison of MMT with PITest}
+\begin{itemize}
+	\item Feature-by-feature comparison (mutation operators, ease-of-use, scalability)
+	\item Performance comparison (speed, mutation score, mutant generation efficiency)
+	\item Strengths and weaknesses of each tool
+	\item Contextual suitability (when to prefer MMT or PITest)
+\end{itemize}
+
+\section{Conclusion}
+\begin{itemize}
+	\item Summary of main points discussed
+	\item Highlight potential improvements for MMT identified by metrics
+	\item Recommendations for future research and practical application
+\end{itemize}
+
+\bibliographystyle{ACM-Reference-Format}
+\bibliography{references}
+
+\end{document}

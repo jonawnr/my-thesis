@@ -1,24 +1,43 @@
-\documentclass[sigplan, nonacm]{acmart}
+\documentclass[12pt,a4paper]{article}
 \usepackage[utf8]{inputenc}
+\usepackage[margin=1in]{geometry}
+\usepackage{setspace}
+\usepackage{amsmath,amsfonts,amssymb}
 \usepackage{graphicx}
-\usepackage{subcaption}
-\usepackage{microtype}
-\usepackage{flushend}  % Better column balancing
-\usepackage{balance}   % Fix balance package issues
+\usepackage{url}
+\usepackage[colorlinks=true,linkcolor=black,citecolor=black,urlcolor=black]{hyperref}
+
+\usepackage[style=ieee,backend=biber]{biblatex}
+\addbibresource{references.bib}
+
+\doublespacing
 
 \begin{document}
 
-\title{Model-based Mutation Testing: A Comparative Study with PITest}
+% Custom title page
+\begin{titlepage}
+\centering
+\vspace*{2cm}
 
-\author{Jonathan Wagner}
-\email{wagnerjo@students.uni-marburg.de}
-\affiliation{%
-	\institution{Philipps-University Marburg}
-	\city{Marburg}
-	\country{Germany}
-}
+{\Huge\textbf{Model-based Mutation Testing: A Comparative Study with PITest}}\\[1.5cm]
 
-\maketitle
+{\Large\textbf{A Thesis Proposal}}\\[2cm]
+
+{\Large Jonathan Wagner}\\[0.5cm]
+{\large \texttt{wagnerjo@students.uni-marburg.de}}\\[1.5cm]
+
+{\large Department of Mathematics and Computer Science}\\[0.3cm]
+{\large Philipps-University Marburg}\\[0.3cm]
+{\large Marburg, Germany}\\[2cm]
+
+{\large \today}
+
+\vfill
+\end{titlepage}
+
+% Table of contents on its own page
+\tableofcontents
+\newpage
 
 \section{Introduction}
 Mutation testing is a technique to evaluate the quality of test suites by
@@ -76,6 +95,21 @@ detected (or "killed") mutants and the total number of generated mutants. A
 mutation score of 1.0 means all mutants were killed. Ideally, a high
 mutation score indicates a robust test suite capable of detecting subtle
 faults.
+
+Another important quality criterion for mutants is \textit{patch overlap}—that is,
+whether a mutant alters the same code region as a real bug fix. Mutants that
+overlap with actual patches are considered particularly valuable, as they more
+closely resemble realistic faults and provide deeper insight into the
+effectiveness of a test suite. MMT takes this dimension into account by
+analyzing whether generated mutants align with regions changed by real-world
+patches, helping to prioritize impactful mutations.
+
+To reduce the number of less meaningful mutants, MMT also implements both
+static and dynamic \textit{reduction strategies} \cite{bockisch_mutation_2024}. These
+techniques limit mutant generation to code that is either covered by tests or
+exhibits higher cyclomatic complexity. Such filtering mechanisms enhance
+efficiency by discarding trivial or untested code segments, while preserving
+the ability to detect critical faults.
 
 \begin{itemize}
 	\item PATCH OVERLAP!
@@ -240,8 +274,8 @@ further optimizing the mutation testing process.
 
 Designed for seamless integration into existing development workflows, PIT is
 easily incorporated into build tools such as Maven, Ant, and Gradle, and it
-integrates well with popular integrated development environments like Eclipse
-Noed
+integrates well with popular integrated development environments like Eclipse 
+and IntelliJ IDEA. The tool’s straightforward configuration and automated 
 execution mean that it can be adopted with minimal disruption to the standard
 development process. Moreover, PIT produces detailed HTML reports that
 visually annotate source code with mutation information, thereby helping
@@ -261,6 +295,104 @@ innovation to offer an effective and scalable mutation testing solution for
 Java applications.
 
 \section{Applying Mutation Testing to Defects4J}
+
+\subsection{Introduction to Defects4J}
+
+Defects4J is a curated database and extensible framework that provides 
+reproducible real-world bugs from open-source Java programs to support 
+controlled software testing research \cite{just_defects4j_2014}. The primary 
+motivation behind Defects4J is to address the lack of widely accepted datasets 
+of real faults, which has hindered the reproducibility and comparability of 
+empirical studies in software testing. Unlike hand-seeded faults or artificial 
+mutants, the bugs in Defects4J are extracted from version control histories, 
+manually isolated to avoid unrelated changes such as refactorings, and are 
+accompanied by regression tests that expose the faults.
+
+The initial release of Defects4J includes 357 real bugs from five large Java 
+programs: JFreeChart, Closure Compiler, Commons Math, Joda-Time, and Commons 
+Lang. Each bug is represented by two versions of the program—a buggy version 
+and a fixed version—as well as a patch that isolates the change and tests that 
+fail on the buggy version but pass on the fixed one. This setup allows 
+researchers to evaluate the effectiveness of testing tools and techniques under 
+realistic conditions.
+
+Defects4J also features a test execution framework that standardizes access to 
+faulty and fixed versions, abstracts away project-specific build systems, and 
+provides APIs for tasks such as test execution, code coverage, and mutation 
+analysis. These features make Defects4J an ideal benchmark for evaluating 
+mutation testing tools like MMT and PITest in a reproducible and meaningful way.
+
+\subsection{Methodology for Applying MMT and PITest to Defects4J}
+
+To evaluate and compare the capabilities of MMT and PITest, we conduct mutation testing experiments on selected projects from the Defects4J benchmark. This section outlines the criteria for selecting programs and bugs, describes the experimental setup, and details the metrics we use for comparison.
+
+\subsubsection{Selection of Programs}
+
+Defects4J provides five large Java projects, each from different domains and 
+with varying complexity. For this study, we select the following three projects:
+
+\begin{itemize}
+\item \textbf{Commons Math (106 bugs)} — A library for mathematical and statistical computations. It is selected for its high number of faults and computational complexity, which offers a meaningful context for evaluating advanced mutation operators.
+\item \textbf{Joda-Time (27 bugs)} — A widely used library for handling date and time. Its domain-specific operations and relatively smaller size make it a good candidate for testing efficiency and bytecode-level model transformations.
+\item \textbf{Closure Compiler (133 bugs)} — A JavaScript optimizing compiler with complex logic and API interactions. It is chosen for its large size and challenging codebase, which tests the scalability and robustness of the tools.
+\end{itemize}
+
+These projects provide a diverse mix of computational logic, domain-specific structures, and real-world scale, enabling a well-rounded comparison between the two tools.
+
+\subsection{Selection of Bugs}
+
+For each project, we select a representative subset of bugs that meet the following criteria:
+
+\begin{itemize}
+\item \textbf{Reproducibility:} The bug must be reproducible using the provided test suite.
+\item \textbf{Test Exposure:} At least one test must fail on the buggy version and pass on the fixed version.
+\item \textbf{Coverage Variety:} We prioritize bugs that affect methods with varying levels of cyclomatic complexity and test coverage to evaluate how mutation operators behave under different conditions.
+\item \textbf{Isolation:} The patch must only include the bug fix, without unrelated refactorings or feature changes.
+\end{itemize}
+
+We limit our selection to approximately 10–15 bugs per project to ensure depth of analysis while keeping the experiment tractable. Bugs are selected manually using the metadata and patch files provided by Defects4J.
+
+\subsection{Experiment Setup}
+
+For each selected bug, the following steps are performed:
+
+\begin{enumerate}
+\item \textbf{Checkout:} Both the buggy version (V\textsubscript{bug}) and fixed version (V\textsubscript{fix}) are retrieved using Defects4J's CLI tools.
+\item \textbf{Test Baseline:} The included test suite is executed on V\textsubscript{bug} to confirm that the bug is reproducible.
+\item \textbf{Mutation Execution:}
+\begin{itemize}
+\item \textbf{PITest:} Mutants are generated and executed using PITest with its default configuration and operator set.
+\item \textbf{MMT:} The same version is transformed into a model, mutated using a predefined set of operators, and recompiled. The test suite is then executed on each mutated version.
+\end{itemize}
+\item \textbf{Reduction Strategies (MMT only):} We evaluate MMT with and without reduction strategies based on cyclomatic complexity and test coverage annotations.
+\end{enumerate}
+
+Each tool is run in isolation on identical code versions to ensure fairness. To ensure consistency, all experiments are executed on a dedicated machine using the same JVM (Java 8), and system load is kept minimal.
+
+\subsection{Metrics and Measurements}
+
+We compare MMT and PITest across the following dimensions:
+
+\begin{itemize}
+\item \textbf{Mutation Score:} Ratio of killed mutants to total mutants. This indicates the fault-detection capability of the test suite.
+\item \textbf{Mutant Count:} Total number of mutants generated. This highlights the expressiveness and granularity of each tool’s mutation operators.
+\item \textbf{Execution Time:} Time taken to generate mutants and run the test suite. This reflects the practical overhead of each approach.
+\item \textbf{Equivalent Mutants (Manually Identified):} An estimate of the number of mutants that do not change program semantics, which affects the interpretability of the mutation score.
+\item \textbf{Operator Effectiveness (MMT only):} Effectiveness of advanced model-based mutation operators in generating useful faults, categorized by mutation type (e.g., API, inheritance, Java-specific features).
+\end{itemize}
+
+We also qualitatively evaluate the types of faults detected and missed by each tool and analyze whether certain operators in MMT reveal faults that PITest cannot, especially in object-oriented or API-heavy code.
+
+\subsection{Threats to Validity}
+
+To address potential validity threats:
+
+\begin{itemize}
+\item \textbf{Selection Bias:} We mitigate this by selecting bugs across different programs and complexities.
+\item \textbf{Operator Bias:} Both tools are tested with their default operator configurations to reflect realistic usage.
+\item \textbf{Manual Analysis Bias:} For equivalent mutant identification and qualitative assessments, multiple independent evaluations are performed.
+\end{itemize}
+
 \begin{itemize}
 	\item Introduction to Defects4J (brief)
 	\item Methodology for applying MMT and PITest to Defects4J examples
@@ -284,9 +416,6 @@ Java applications.
 	\item Recommendations for future research and practical application
 \end{itemize}
 
-\vfill
-\balance
-\bibliographystyle{ACM-Reference-Format}
-\bibliography{references}
+\printbibliography
 
 \end{document}
